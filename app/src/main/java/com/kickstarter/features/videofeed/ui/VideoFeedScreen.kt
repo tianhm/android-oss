@@ -40,6 +40,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.PlaybackException
 import com.kickstarter.R
 import com.kickstarter.features.socialshare.AndroidSocialShareService
@@ -291,14 +292,15 @@ fun VideoFeedScreen(
 
         shareData?.let { data ->
             val context = LocalContext.current
-            val shareViewModel = remember(data) {
-                SocialShareViewModel(
+            val shareViewModel: SocialShareViewModel = viewModel(
+                key = data.projectUrl,
+                factory = SocialShareViewModel.Factory(
                     environment = environment,
-                    shareService = AndroidSocialShareService(context.applicationContext),
+                    service = AndroidSocialShareService(context.applicationContext),
                     shareData = data,
                     contextPage = ContextPageName.VIDEO_FEED
                 )
-            }
+            )
             CompositionLocalProvider(LocalSocialShareViewModel provides shareViewModel) {
                 SocialShareSheet(
                     shareData = data,
